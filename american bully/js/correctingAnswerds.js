@@ -50,7 +50,7 @@ function correct(e) {
 
     // Question 5
 
-    if (document.getElementById("q5A").checked) {
+    if (document.getElementById("q5B").checked) {
         score++;
         document.getElementById("q5").style.color = "green";
     } else {
