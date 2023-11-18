@@ -6,6 +6,8 @@ function correct(e) {
 
     score = 0;
 
+    // Question 1
+
     if (document.getElementById("q1A").checked) {
         score++;
         document.getElementById("q1").style.color = "green";
@@ -13,43 +15,53 @@ function correct(e) {
         document.getElementById("q1").style.color = "red";
     }
 
+    // Question 2
+
     if (document.getElementById("q2A").checked || 
-        !(document.getElementById("q2B").checked) || 
-        !( document.getElementById("q2C").checked) || 
-        document.getElementById("q2D").checked ) {
+        ! (document.getElementById("q2B").checked) || 
+        ! (document.getElementById("q2C").checked) || 
+        document.getElementById("q2D").checked  ||
+        !(document.getElementById("q2E").checked)
+        ) {
         score++;
         document.getElementById("q2").style.color = "green";
     } else {
         document.getElementById("q2").style.color = "red";
     }
 
-    if (document.getElementById("q3Anser").value == 4) { 
+    // Question 3
+
+    if (document.getElementById("q3B").checked) {
         score++;
         document.getElementById("q3").style.color = "green";
     } else {
         document.getElementById("q3").style.color = "red";
     }
 
-    dropdiv = document.getElementById("dropdiv");
-    dogs = dropdiv.childNodes;
-    dogIDs = "";
+    // Question 4
 
-    for (i = 0; i < dogs.length; i++) {
-        dogIDs = dogIDs + dogs[i].id;
-    }
-    console.log(dogIDs);
-
-    if (dogIDs == ["dog1dog2dog3"]) {
+    if (document.getElementById("q4C").checked) {
         score++;
         document.getElementById("q4").style.color = "green";
-
     } else {
         document.getElementById("q4").style.color = "red";
     }
 
 
+    // Question 5
+
+    if (document.getElementById("q5A").checked) {
+        score++;
+        document.getElementById("q5").style.color = "green";
+    } else {
+        document.getElementById("q5").style.color = "red";
+    }
+
+    // Display score
+
+
     console.log(score);
     document.getElementById("score").toggleAttribute("hidden");
-    document.getElementById("score").innerHTML = "You scored " + score + " out of 4!";
+    document.getElementById("score").innerHTML =   score + " / 5";
 
 }
