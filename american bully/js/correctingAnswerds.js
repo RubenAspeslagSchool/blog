@@ -1,4 +1,5 @@
 
+
 document.getElementById("score").toggleAttribute("hidden");
 
 function correct(e) {
@@ -17,10 +18,11 @@ function correct(e) {
 
     // Question 2
 
-    if (document.getElementById("q2A").checked || 
-        ! (document.getElementById("q2B").checked) || 
-        ! (document.getElementById("q2C").checked) || 
-        document.getElementById("q2D").checked  ||
+   
+    if (document.getElementById("q2A").checked && 
+        ! (document.getElementById("q2B").checked) &&
+        ! (document.getElementById("q2C").checked) && 
+        document.getElementById("q2D").checked  &&
         !(document.getElementById("q2E").checked)
         ) {
         score++;
@@ -58,10 +60,16 @@ function correct(e) {
     }
 
     // Display score
-
-
     console.log(score);
     document.getElementById("score").toggleAttribute("hidden");
     document.getElementById("score").innerHTML =   score + " / 5";
+
+    // Display correct answers
+    correctAnswers = document.querySelectorAll(".correctAnswer");
+    console.log(correctAnswers);
+    correctAnswers.forEach(correctAnswer => {
+        correctAnswer.classList.toggle("hidden");
+    });
+
 
 }
