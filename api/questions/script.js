@@ -1,75 +1,75 @@
-const questionsList = document.getElementById('questions-list');
-let db = {};
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const action = params.get('action');
 
-// Fetch the JSON database
-fetch('db.json')
-  .then(response => response.json())
-  .then(data => {
-    db = data;
-    displayQuestions();
-  });
+  fetch('db.json')
+    .then(response => response.json())
+    .then(data => {
+      if (action === 'getQuestions') {
+        getQuestions(data);
+      } else if (action === 'postQuestion') {
+        const question = params.get('question');
+        if (question) {
+          postQuestion(data, question);
+        }
+      } else if (action === 'postAnswer') {
+        const questionId = parseInt(params.get('questionId'));
+        const answer = params.get('answer');
+        if (questionId && answer) {
+          postAnswer(data, questionId, answer);
+        }
+      }
+    });
+});
 
-function displayQuestions() {
-  questionsList.innerHTML = '';
-  db.questions.forEach(question => {
-    const li = document.createElement('li');
-    li.innerHTML = `<strong>${question.id}: ${question.question}</strong>`;
-    if (question.answers.length > 0) {
-      const ul = document.createElement('ul');
-      question.answers.forEach(answer => {
-        const answerLi = document.createElement('li');
-        answerLi.textContent = answer;
-        ul.appendChild(answerLi);
-      });
-      li.appendChild(ul);
-    }
-    questionsList.appendChild(li);
-  });
+function getQuestions(data) {
+  sendJSONResponse(data.questions);
 }
 
-function addQuestion() {
-  const newQuestionInput = document.getElementById('new-question');
-  const newQuestionText = newQuestionInput.value.trim();
-  if (newQuestionText) {
-    const newQuestion = {
-      id: db.questions.length + 1,
-      question: newQuestionText,
-      answers: []
-    };
-    db.questions.push(newQuestion);
-    newQuestionInput.value = '';
-    displayQuestions();
-    saveDB();
+function postQuestion(data, questionText) {
+  const newQuestion = {
+    id: data.questions.length + 1,
+    question: questionText,
+    answers: []
+  };
+  data.questions.push(newQuestion);
+  saveDB(data);
+  sendJSONResponse({ message: 'Question added successfully' });
+}
+
+function postAnswer(data, questionId, answerText) {
+  const question = data.questions.find(q => q.id === questionId);
+  if (question) {
+    question.answers.push(answerText);
+    saveDB(data);
+    sendJSONResponse({ message: 'Answer added successfully' });
+  } else {
+    sendJSONResponse({ error: 'Question ID not found' }, 404);
   }
 }
 
-function addAnswer() {
-  const questionIdInput = document.getElementById('question-id');
-  const newAnswerInput = document.getElementById('new-answer');
-  const questionId = parseInt(questionIdInput.value);
-  const newAnswerText = newAnswerInput.value.trim();
-  if (questionId && newAnswerText) {
-    const question = db.questions.find(q => q.id === questionId);
-    if (question) {
-      question.answers.push(newAnswerText);
-      questionIdInput.value = '';
-      newAnswerInput.value = '';
-      displayQuestions();
-      saveDB();
-    } else {
-      alert('Question ID not found.');
-    }
-  }
+function sendJSONResponse(response, status = 200) {
+  const responseBody = JSON.stringify(response);
+  const script = document.createElement('script');
+  script.type = 'application/json';
+  script.textContent = responseBody;
+  document.body.appendChild(script);
+  console.log(responseBody);
 }
 
-function saveDB() {
-  // Save the updated db to localStorage
-  localStorage.setItem('db', JSON.stringify(db));
+function saveDB(data) {
+  localStorage.setItem('db', JSON.stringify(data));
 }
 
 // Load the db from localStorage if available
 const savedDB = localStorage.getItem('db');
 if (savedDB) {
   db = JSON.parse(savedDB);
-  displayQuestions();
+} else {
+  fetch('db.json')
+    .then(response => response.json())
+    .then(data => {
+      db = data;
+      localStorage.setItem('db', JSON.stringify(db));
+    });
 }
